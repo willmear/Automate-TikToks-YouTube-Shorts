@@ -26,12 +26,12 @@ def tts():
         )
 
         response.stream_to_file(speech_file_path)
-    except openai.APIError as e:
-        print(f"OpenAI Error: {e}")
-        pass
     except openai.APIConnectionError as e:
         # Handle connection error here
         print(f"Failed to connect to OpenAI API: {e}")
+        pass
+    except openai.APIError as e:
+        print(f"OpenAI Error: {e}")
         pass
     except openai.RateLimitError as e:
         # Handle rate limit error (we recommend using exponential backoff)

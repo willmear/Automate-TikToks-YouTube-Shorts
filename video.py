@@ -10,7 +10,6 @@ from termcolor import colored
 from moviepy import *
 from moviepy.editor import *
 
-
 load_dotenv('.env')
 aai.settings.api_key = os.getenv('ASSEMBLYAI_API_KEY')
 
@@ -38,15 +37,9 @@ def transcribe():
 def cut_video(length: int):
     gameplay = VideoFileClip("Gameplay.mp4")
     gameplay = gameplay.without_audio()
-    # cropped_clip = crop(gameplay, width=gameplay.w, height=round(gameplay.w / 0.5625),
-    #                 x_center=gameplay.w / 2,
-    #                 y_center=gameplay.h / 2)
-    (w, h) = gameplay.size
-    crop_width = h * 9 / 16
-    x1, x2 = (w - crop_width) // 2, (w + crop_width) // 2
-    y1, y2 = 0, h
-    cropped_clip = crop(gameplay, x1=x1, y1=y1, x2=x2, y2=y2)
 
+    (w, h) = gameplay.size
+    cropped_clip = crop(gameplay, width=600, height=5000, x_center=w/2, y_center=h/2)
 
     return cropped_clip.set_start(t=0).set_end(t=(length / 1000) + 2)
 
