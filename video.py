@@ -1,13 +1,8 @@
 from dotenv import load_dotenv
 import assemblyai as aai
-import os
 
-from moviepy.audio.AudioClip import CompositeAudioClip
-from moviepy.audio.io.AudioFileClip import AudioFileClip
 from moviepy.video.fx.crop import crop
-from moviepy.video.io.VideoFileClip import VideoFileClip
 from termcolor import colored
-from moviepy import *
 from moviepy.editor import *
 
 load_dotenv('.env')
@@ -20,7 +15,7 @@ def create_video():
     words = transcribe()
     gameplay = cut_video(words[-1].end)
     gameplay = add_audio(gameplay)
-    subtitle(gameplay)
+    gameplay = subtitle(gameplay, words)
     gameplay.write_videofile('./videos/video.mp4', codec='libx264', audio_codec='aac', bitrate="5000k")
 
 
@@ -30,7 +25,7 @@ def transcribe():
     if transcript.status == aai.TranscriptStatus.error:
         print(colored(transcript.error))
     else:
-        print(colored("transcribed"))
+        print(colored("transcribed", 'green'))
         return transcript.words
 
 
@@ -39,7 +34,7 @@ def cut_video(length: int):
     gameplay = gameplay.without_audio()
 
     (w, h) = gameplay.size
-    cropped_clip = crop(gameplay, width=600, height=5000, x_center=w/2, y_center=h/2)
+    cropped_clip = crop(gameplay, width=600, height=5000, x_center=w / 2, y_center=h / 2)
 
     return cropped_clip.set_start(t=0).set_end(t=(length / 1000) + 2)
 
@@ -51,5 +46,24 @@ def add_audio(gameplay: VideoFileClip):
     return gameplay
 
 
-def subtitle(gameplay: VideoFileClip):
-    pass
+def subtitle(gameplay: VideoFileClip, words):
+    clip_list = [gameplay]
+
+    objects = three_per_line(words)
+
+    for word_group in objects:
+        print(colored(' '.join(word.text for word in word_group), "blue"))
+        text = ' '.join(word.text for word in word_group)
+        txt_clip = (TextClip(text, color='white', font='Arial-Bold', size=(gameplay.w, gameplay.h), method="caption")
+                    .set_position(('center', 'center'))
+                    .set_duration((word_group[-1].end - word_group[0].start) / 1000)
+                    .set_start(t=word_group[0].start / 1000))
+        clip_list.append(txt_clip)
+    final_clip = CompositeVideoClip(clip_list)
+
+    return final_clip
+
+
+def three_per_line(words):
+    for i in range(0, len(words), 3):
+        yield words[i:i + 3]
