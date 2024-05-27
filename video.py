@@ -52,15 +52,22 @@ def subtitle(gameplay: VideoFileClip, words):
     objects = three_per_line(words)
 
     for word_group in objects:
-        print(colored(' '.join(word.text for word in word_group), "blue"))
-        text = ' '.join(word.text for word in word_group)
-        txt_clip = (TextClip(text, color='white', font='Arial-Bold', size=(gameplay.w, gameplay.h), method="caption")
-                    .set_position(('center', 'center'))
-                    .set_duration((word_group[-1].end - word_group[0].start) / 1000)
-                    .set_start(t=word_group[0].start / 1000))
-        clip_list.append(txt_clip)
-    final_clip = CompositeVideoClip(clip_list)
 
+        text = ' '.join(word.text for word in word_group)
+        print(colored(text, "blue"))
+
+        duration = word_group[-1].end - word_group[0].start
+
+        txt_clip = (TextClip(text, fontsize=60, color='white', font='TheBoldFont',
+                             size=(gameplay.w, gameplay.h), method="caption",
+                             stroke_width=2, stroke_color="black")
+                    .set_position(('center', 'center'))
+                    .set_duration(duration / 1000)
+                    .set_start(t=word_group[0].start / 1000))
+
+        clip_list.append(txt_clip)
+
+    final_clip = CompositeVideoClip(clip_list)
     return final_clip
 
 
