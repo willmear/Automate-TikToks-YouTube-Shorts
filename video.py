@@ -58,7 +58,7 @@ def subtitle(gameplay: VideoFileClip, words):
 
         duration = word_group[-1].end - word_group[0].start
 
-        txt_clip = (TextClip(text, fontsize=60, color='white', font='TheBoldFont',
+        txt_clip = (TextClip(text, fontsize=50, color='white', font='TheBoldFont',
                              size=(gameplay.w, gameplay.h), method="caption",
                              stroke_width=2, stroke_color="black")
                     .set_position(('center', 'center'))

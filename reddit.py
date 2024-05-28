@@ -27,11 +27,12 @@ headers["Authorization"] = f'bearer {TOKEN}'
 
 def get_posts(subreddit, limit=1):
     params = {'limit': limit}
-    post = requests.get(f'https://oauth.reddit.com/r/{subreddit}/hot',
+    post = requests.get(f'https://oauth.reddit.com/r/{subreddit}/controversial',
                         headers=headers, params=params).json()
+    print(post)
     title = post['data']['children'][0]['data']['title']
     post_id = post['data']['children'][0]['data']['id']
-    comment_params = {'limit': 5, 'sort': 'top', 'depth': 0}
+    comment_params = {'limit': 3, 'sort': 'top', 'depth': 0}
     comments = requests.get(f'https://oauth.reddit.com/r/{subreddit}/comments/{post_id}',
                             headers=headers, params=comment_params).json()
 
