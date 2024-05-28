@@ -1,10 +1,10 @@
-import tts, video
+import tts, video, reddit
 
 
 def main():
-    # tts.tts()
+    script = reddit.get_posts('AskReddit')
+    tts.tts(script)
     video.create_video()
-
 
 
 if __name__ == "__main__":

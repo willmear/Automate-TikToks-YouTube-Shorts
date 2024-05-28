@@ -16,13 +16,13 @@ aai.settings.api_key = os.getenv('ASSEMBLYAI_API_KEY')
 FILE_URL = './speech/speech.mp3'
 
 
-def tts():
+def tts(script: str):
     speech_file_path = Path(__file__).parent / "speech" / "speech.mp3"
     try:
         response = client.audio.speech.create(
             model="tts-1",
             voice="onyx",
-            input="Today is a wonderful day to build something people love!"
+            input=f"{script}"
         )
 
         response.stream_to_file(speech_file_path)
