@@ -1,6 +1,5 @@
 from dotenv import load_dotenv
 import assemblyai as aai
-
 from moviepy.video.fx.crop import crop
 from termcolor import colored
 from moviepy.editor import *

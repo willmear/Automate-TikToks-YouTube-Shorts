@@ -1,5 +1,4 @@
 from pathlib import Path
-
 import openai
 from openai import OpenAI
 from termcolor import colored
