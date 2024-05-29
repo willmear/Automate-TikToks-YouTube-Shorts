@@ -23,14 +23,26 @@ CLIENT_SECRETS_FILE = "client_secrets.json"
 
 
 def main():
-    # script = reddit.get_posts('AskReddit')
-    # tts.tts(script)
-    # video.create_video()
-    # upload_youtube_short("./videos/video.mp4")
+    # TOMORROW: GET TITLE + DESCRIPTION + COMMENTS
+    subreddits = ['AskReddit']
+    last_post_fullname = ''
+
+    while True:
+        try:
+            value = reddit.get_posts('AskReddit', last_post_fullname)
+            last_post_fullname = value[2]
+            title = value[1]
+            # title = 'What do you think is the last just war the USA fought?'
+            script = value[0]
+            tts.tts(script)
+            video.create_video(title[:20])
+            upload_youtube_short(f"D:\\videos\\{title[:20]}.mp4", title[:99])
+        except:
+            continue
 
 
-def upload_youtube_short(video_file, title="Short Title", description="",
-                         keywords="", privacy_status="public"):
+def upload_youtube_short(video_file, title, description="#shorts #fyp #story",
+                         keywords="reddit, askreddit, story, fyp, storytime", privacy_status="public"):
     # Check if the file exists
     if not os.path.exists(video_file):
         return "Error: File does not exist."
@@ -59,7 +71,8 @@ def upload_youtube_short(video_file, title="Short Title", description="",
             "categoryId": "27"  # Use category ID for "Shorts" category
         },
         "status": {
-            "privacyStatus": privacy_status
+            "privacyStatus": privacy_status,
+            "selfDeclaredMadeForKids": 'false'
         }
     }
 

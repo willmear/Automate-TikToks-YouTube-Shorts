@@ -25,23 +25,28 @@ TOKEN = get_auth()
 headers["Authorization"] = f'bearer {TOKEN}'
 
 
-def get_posts(subreddit, limit=1):
+def get_posts(subreddit, last_post_fullname, limit=1):
     # do top/controversial of hour for multiple subreddits
 
-    params = {'limit': limit, 't': 'hour'}
-    post = requests.get(f'https://oauth.reddit.com/r/{subreddit}/top',
+    if last_post_fullname != '':
+        params = {'limit': limit, 't': 'day', 'after': last_post_fullname}
+    else:
+        params = {'limit': limit, 't': 'day'}
+
+    post = requests.get(f'https://oauth.reddit.com/r/{subreddit}/hot',
                         headers=headers, params=params).json()
 
     title = post['data']['children'][0]['data']['title']
     print(title)
+    post_fullname = post['data']['after']
     post_id = post['data']['children'][0]['data']['id']
-    comment_params = {'limit': 5, 'sort': 'top', 'depth': 0}
+    comment_params = {'limit': 3, 'sort': 'top', 'depth': 0}
     comments = requests.get(f'https://oauth.reddit.com/r/{subreddit}/comments/{post_id}',
                             headers=headers, params=comment_params).json()
 
     comments_list = extract_body_fields(comments)
 
-    return title + ' ' + '. '.join(comment for comment in comments_list)
+    return [title + '... ' + '... '.join(comment for comment in comments_list), title, post_fullname]
 
 
 def extract_body_fields(comment_data):

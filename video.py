@@ -3,6 +3,8 @@ import assemblyai as aai
 from moviepy.video.fx.crop import crop
 from termcolor import colored
 from moviepy.editor import *
+import moviepy.video.fx.all as vfx
+
 
 load_dotenv('.env')
 aai.settings.api_key = os.getenv('ASSEMBLYAI_API_KEY')
@@ -10,12 +12,13 @@ aai.settings.api_key = os.getenv('ASSEMBLYAI_API_KEY')
 FILE_URL = './speech/speech.mp3'
 
 
-def create_video():
+def create_video(title):
     words = transcribe()
     gameplay = cut_video(words[-1].end)
     gameplay = add_audio(gameplay)
     gameplay = subtitle(gameplay, words)
-    gameplay.write_videofile('./videos/video.mp4', codec='libx264', audio_codec='aac', bitrate="5000k")
+    gameplay = gameplay.fx(vfx.speedx, 1.25)
+    gameplay.write_videofile(f'D:\\videos\\{title}.mp4', codec='libx264', audio_codec='aac', bitrate="5000k")
 
 
 def transcribe():
