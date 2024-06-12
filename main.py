@@ -24,19 +24,20 @@ CLIENT_SECRETS_FILE = "client_secrets.json"
 
 def main():
     # TOMORROW: GET TITLE + DESCRIPTION + COMMENTS
-    subreddits = ['AskReddit']
+
     last_post_fullname = ''
 
-    while True:
+    for i in range(1, 26):
         try:
             value = reddit.get_posts('AskReddit', last_post_fullname)
             last_post_fullname = value[2]
             title = value[1]
-            # title = 'What do you think is the last just war the USA fought?'
+            with open(f"D:\\videos\\{i}{title[:20]}.txt", "w") as file:
+                file.write(title)
             script = value[0]
             tts.tts(script)
-            video.create_video(title[:20])
-            upload_youtube_short(f"D:\\videos\\{title[:20]}.mp4", title[:99])
+            video.create_video(title[:20], i)
+            upload_youtube_short(f"D:\\videos\\{i}{title[:20]}.mp4", title[:99])
         except:
             continue
 

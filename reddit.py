@@ -29,9 +29,9 @@ def get_posts(subreddit, last_post_fullname, limit=1):
     # do top/controversial of hour for multiple subreddits
 
     if last_post_fullname != '':
-        params = {'limit': limit, 't': 'day', 'after': last_post_fullname}
+        params = {'limit': limit, 't': 'hour', 'after': last_post_fullname}
     else:
-        params = {'limit': limit, 't': 'day'}
+        params = {'limit': limit, 't': 'hour'}
 
     post = requests.get(f'https://oauth.reddit.com/r/{subreddit}/hot',
                         headers=headers, params=params).json()
@@ -40,7 +40,7 @@ def get_posts(subreddit, last_post_fullname, limit=1):
     print(title)
     post_fullname = post['data']['after']
     post_id = post['data']['children'][0]['data']['id']
-    comment_params = {'limit': 3, 'sort': 'top', 'depth': 0}
+    comment_params = {'limit': 4, 'sort': 'top', 'depth': 0}
     comments = requests.get(f'https://oauth.reddit.com/r/{subreddit}/comments/{post_id}',
                             headers=headers, params=comment_params).json()
 

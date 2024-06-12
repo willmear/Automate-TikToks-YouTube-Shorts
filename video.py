@@ -4,6 +4,7 @@ from moviepy.video.fx.crop import crop
 from termcolor import colored
 from moviepy.editor import *
 import moviepy.video.fx.all as vfx
+import random
 
 
 load_dotenv('.env')
@@ -12,13 +13,13 @@ aai.settings.api_key = os.getenv('ASSEMBLYAI_API_KEY')
 FILE_URL = './speech/speech.mp3'
 
 
-def create_video(title):
+def create_video(title, i):
     words = transcribe()
     gameplay = cut_video(words[-1].end)
     gameplay = add_audio(gameplay)
     gameplay = subtitle(gameplay, words)
     gameplay = gameplay.fx(vfx.speedx, 1.25)
-    gameplay.write_videofile(f'D:\\videos\\{title}.mp4', codec='libx264', audio_codec='aac', bitrate="5000k")
+    gameplay.write_videofile(f'D:\\videos\\{i}{title}.mp4', codec='libx264', audio_codec='aac', bitrate="5000k")
 
 
 def transcribe():
@@ -32,13 +33,19 @@ def transcribe():
 
 
 def cut_video(length: int):
-    gameplay = VideoFileClip("Gameplay.mp4")
+    options = ["gta", "satisfying", "minecraft"]
+    choice = options[random.randint(0, 2)]
+    print(colored(choice, 'green'))
+    gameplay = VideoFileClip(f"D:\\BACKGROUNDVIDEOS\\{choice}.mp4")
     gameplay = gameplay.without_audio()
 
     (w, h) = gameplay.size
     cropped_clip = crop(gameplay, width=600, height=5000, x_center=w / 2, y_center=h / 2)
 
-    return cropped_clip.set_start(t=0).set_end(t=(length / 1000) + 2)
+    start_time = random.uniform(0, gameplay.duration-(length / 1000)-2)
+    end_time = start_time + (length / 1000) + 2
+
+    return cropped_clip.subclip(start_time, end_time)
 
 
 def add_audio(gameplay: VideoFileClip):
